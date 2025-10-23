@@ -13,13 +13,22 @@ function DashboardLayout({
   return (
     <AuthProvider initialUser={initialUser}>
       <NotificationProvider initialNotifications={initialNotifications}>
-        <div className="dashboard-layout">
-          <header className="dashboard-layout__header">{header}</header>
-          <div className="dashboard-layout__body">
-            <aside className="dashboard-layout__sidebar">{sidebar}</aside>
-            <main className="dashboard-layout__content" role="main">
-              {children}
-            </main>
+        <div className="hub-layout">
+          <a className="hub-layout__skip-link" href="#hub-main-content">
+            Skip to main content
+          </a>
+          <div className="hub-layout__grid">
+            <aside className="hub-layout__sidebar" role="complementary">
+              {sidebar}
+            </aside>
+            <div className="hub-layout__main">
+              <header className="hub-layout__header" role="banner">
+                {header}
+              </header>
+              <main id="hub-main-content" className="hub-layout__content" role="main">
+                {children}
+              </main>
+            </div>
           </div>
         </div>
       </NotificationProvider>
