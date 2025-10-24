@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>React Repository Interactive Prototype</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header class="app-header">
+      <div class="logo">
+        <span aria-hidden="true">⚛️</span>
+        <h1>React Repository Explorer</h1>
+      </div>
+      <p class="tagline">
+        A clickable prototype that demonstrates the main areas of the React
+        codebase and how to get started hacking on them.
+      </p>
+    </header>
+
+    <main class="layout">
+      <aside class="sidebar" aria-label="Repository areas">
+        <nav>
+          <h2>Explore</h2>
+          <ul id="sectionList" class="nav-list" role="list"></ul>
+        </nav>
+        <section class="checklist" aria-labelledby="checklist-title">
+          <h2 id="checklist-title">Setup Checklist</h2>
+          <ul class="checklist-items" role="list">
+            <li><button data-check="node" class="check">Install Node.js &amp; Yarn</button></li>
+            <li><button data-check="install" class="check">Run <code>yarn install</code></button></li>
+            <li><button data-check="build" class="check">Build with <code>yarn build</code></button></li>
+            <li><button data-check="test" class="check">Execute <code>yarn test</code></button></li>
+          </ul>
+          <p class="checklist-status" role="status" aria-live="polite"></p>
+        </section>
+      </aside>
+
+      <section class="content" aria-live="polite">
+        <article id="contentPanel" class="content-panel"></article>
+        <section class="cta">
+          <h2>Ready to contribute?</h2>
+          <p>
+            When you are comfortable with the repository structure, jump into a
+            package, fix a bug, or propose a feature. Review the contribution
+            guide first and follow the build &amp; test checklist above.
+          </p>
+          <div class="cta-actions">
+            <a class="button" href="https://github.com/facebook/react/blob/main/CONTRIBUTING.md" target="_blank" rel="noreferrer">
+              View CONTRIBUTING.md
+            </a>
+            <a class="button secondary" href="https://github.com/facebook/react" target="_blank" rel="noreferrer">
+              Open Repository
+            </a>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <dialog id="detailDialog" class="detail-dialog" aria-modal="true">
+      <form method="dialog">
+        <header>
+          <h2 id="dialogTitle"></h2>
+          <button type="submit" aria-label="Close details" class="dialog-close">✕</button>
+        </header>
+        <div id="dialogBody"></div>
+      </form>
+    </dialog>
+
+    <template id="navItemTemplate">
+      <li>
+        <button class="nav-item" type="button"></button>
+      </li>
+    </template>
+
+    <template id="cardTemplate">
+      <section class="card" tabindex="0">
+        <header>
+          <h2 class="card-title"></h2>
+          <p class="card-subtitle"></p>
+        </header>
+        <p class="card-description"></p>
+        <ul class="card-links" role="list"></ul>
+        <button class="card-more" type="button">Show details</button>
+      </section>
+    </template>
+
+    <template id="linkTemplate">
+      <li>
+        <a class="resource-link" target="_blank" rel="noreferrer"></a>
+      </li>
+    </template>
+
+    <script src="script.js"></script>
+  </body>
+</html>
