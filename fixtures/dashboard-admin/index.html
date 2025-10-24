@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Control Hub Prototype</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script type="text/babel">
+      const { useMemo, useState } = React;
+
+      const NAV_LINKS = [
+        { id: 'overview', label: 'Overview', icon: '📊' },
+        { id: 'operations', label: 'Operations', icon: '🛠️' },
+        { id: 'automation', label: 'Automation', icon: '🤖' },
+        { id: 'analytics', label: 'Analytics', icon: '📈' },
+        { id: 'security', label: 'Security', icon: '🛡️' },
+        { id: 'settings', label: 'Settings', icon: '⚙️' },
+      ];
+
+      const METRICS = [
+        { id: 'uptime', label: 'Platform uptime', value: '99.98%', trend: '+0.12%', intent: 'positive' },
+        { id: 'response', label: 'Response latency', value: '183 ms', trend: '-12 ms', intent: 'positive' },
+        { id: 'incidents', label: 'Open incidents', value: '3', trend: '-4', intent: 'neutral' },
+        { id: 'deployments', label: 'Deployments today', value: '12', trend: '+3', intent: 'positive' },
+      ];
+
+      const TASKS = [
+        { id: 'audit', owner: 'Security', title: 'Verify SOC2 controls for Q3', status: 'In progress', intent: 'warning' },
+        { id: 'rollout', owner: 'Platform', title: 'Roll out Canary cluster v4.2', status: 'Scheduled 14:00 UTC', intent: 'info' },
+        { id: 'playbook', owner: 'Automation', title: 'Finalize failover runbook updates', status: 'Review pending', intent: 'info' },
+      ];
+
+      const INCIDENTS = [
+        {
+          id: 'inc-1042',
+          severity: 'Sev 2',
+          title: 'Elevated latency in EU-West ingress',
+          owner: 'Network',
+          eta: 'Mitigation 12m',
+        },
+        {
+          id: 'inc-1038',
+          severity: 'Sev 3',
+          title: 'Degraded build pipeline throughput',
+          owner: 'DevOps',
+          eta: 'Monitoring',
+        },
+      ];
+
+      const ACTIVITY = [
+        { id: 1, time: '08:24', text: 'Rolled out traffic balancing automation across edge fleet.' },
+        { id: 2, time: '07:58', text: 'Data Lake storage policy updated: 35 new compliance checks enforced.' },
+        { id: 3, time: '07:21', text: 'Security analytics detected 4 anomalous sign-ins (auto-resolved).' },
+        { id: 4, time: '06:47', text: 'Production rollout of ML inference sandbox completed (99.9% health).' },
+      ];
+
+      const TAG_STYLES = {
+        positive: 'tag-positive',
+        warning: 'tag-warning',
+        neutral: 'tag-neutral',
+        info: 'tag-info',
+      };
+
+      function SectionTitle({ title, actionLabel }) {
+        return (
+          <div className="section-title">
+            <h2>{title}</h2>
+            {actionLabel ? <button className="ghost-button">{actionLabel}</button> : null}
+          </div>
+        );
+      }
+
+      function MetricCard({ label, value, trend, intent }) {
+        return (
+          <article className="metric-card">
+            <span className="metric-label">{label}</span>
+            <span className="metric-value">{value}</span>
+            <span className={['metric-trend', TAG_STYLES[intent]].join(' ')}>{trend}</span>
+          </article>
+        );
+      }
+
+      function TaskCard({ owner, title, status, intent }) {
+        return (
+          <article className="task-card">
+            <header>
+              <span className="task-owner">{owner}</span>
+              <span className={['task-status', TAG_STYLES[intent]].join(' ')}>{status}</span>
+            </header>
+            <p>{title}</p>
+          </article>
+        );
+      }
+
+      function IncidentRow({ incident }) {
+        return (
+          <div className="incident-row">
+            <div className="incident-title">
+              <span className="incident-severity">{incident.severity}</span>
+              <strong>{incident.title}</strong>
+            </div>
+            <div className="incident-meta">
+              <span>{incident.owner}</span>
+              <span>{incident.eta}</span>
+            </div>
+          </div>
+        );
+      }
+
+      function ActivityFeed({ items }) {
+        return (
+          <ul className="activity-feed">
+            {items.map((item) => (
+              <li key={item.id}>
+                <span className="activity-time">{item.time}</span>
+                <p>{item.text}</p>
+              </li>
+            ))}
+          </ul>
+        );
+      }
+
+      function Sidebar({ links, active, onSelect }) {
+        return (
+          <nav className="sidebar">
+            <div className="sidebar-header">
+              <div className="sidebar-logo">Control Hub</div>
+              <span className="sidebar-subtitle">Prototype</span>
+            </div>
+            <div className="sidebar-links">
+              {links.map((link) => {
+                const isActive = active === link.id;
+                return (
+                  <button
+                    key={link.id}
+                    className={["sidebar-link", isActive ? "is-active" : ""].join(" ")}
+                    onClick={() => onSelect(link.id)}
+                  >
+                    <span className="sidebar-icon" aria-hidden="true">{link.icon}</span>
+                    {link.label}
+                  </button>
+                );
+              })}
+            </div>
+            <div className="sidebar-footer">
+              <button className="primary-button">Launch Automation</button>
+              <button className="ghost-button">Download report</button>
+            </div>
+          </nav>
+        );
+      }
+
+      function Header({ active }) {
+        return (
+          <header className="app-header">
+            <div>
+              <h1>{active === 'overview' ? 'Mission control overview' : 'Operational workspace'}</h1>
+              <p>Unified command center for platform resilience, operations, and automation orchestration.</p>
+            </div>
+            <div className="header-actions">
+              <button className="ghost-button">New automation</button>
+              <button className="primary-button">Deploy change</button>
+            </div>
+          </header>
+        );
+      }
+
+      function MainContent() {
+        return (
+          <main className="main-grid">
+            <section className="metrics">
+              <SectionTitle title="Operational posture" actionLabel="View history" />
+              <div className="metric-grid">
+                {METRICS.map((metric) => (
+                  <MetricCard key={metric.id} {...metric} />
+                ))}
+              </div>
+            </section>
+
+            <section className="tasks">
+              <SectionTitle title="Critical workflows" actionLabel="Automations" />
+              <div className="task-grid">
+                {TASKS.map((task) => (
+                  <TaskCard key={task.id} {...task} />
+                ))}
+              </div>
+            </section>
+
+            <section className="incidents">
+              <SectionTitle title="Incident response" actionLabel="Runbooks" />
+              <div className="incident-list">
+                {INCIDENTS.map((incident) => (
+                  <IncidentRow key={incident.id} incident={incident} />
+                ))}
+              </div>
+            </section>
+
+            <section className="activity">
+              <SectionTitle title="Activity stream" />
+              <ActivityFeed items={ACTIVITY} />
+            </section>
+          </main>
+        );
+      }
+
+      function Dashboard() {
+        const [active, setActive] = useState('overview');
+        const visibleLinks = useMemo(() => NAV_LINKS.slice(0, 6), []);
+
+        return (
+          <div className="app-shell">
+            <Sidebar links={visibleLinks} active={active} onSelect={setActive} />
+            <div className="content-area">
+              <Header active={active} />
+              <MainContent />
+            </div>
+          </div>
+        );
+      }
+
+      const container = document.getElementById('root');
+      const root = ReactDOM.createRoot(container);
+      root.render(<Dashboard />);
+    </script>
+  </body>
+</html>
