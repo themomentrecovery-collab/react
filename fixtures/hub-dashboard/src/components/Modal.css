@@ -1,0 +1,8 @@
+.modal-header h2 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.modal-footer button + button {
+  margin-left: 8px;
+}
