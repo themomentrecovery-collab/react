@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Moment Connect – Referral Hub Prototype</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-icon">MC</div>
+          <span class="brand-name">Moment Connect</span>
+        </div>
+        <nav class="nav">
+          <p class="nav-label">Dashboards</p>
+          <button class="nav-button active" data-dashboard="facility">Facility</button>
+          <button class="nav-button" data-dashboard="agency">Agency</button>
+          <button class="nav-button" data-dashboard="hub">Referral Hub</button>
+          <hr />
+          <p class="nav-label">Global</p>
+          <button class="nav-button" data-dashboard="alerts">Alerts</button>
+          <button class="nav-button" data-dashboard="reports">Reports</button>
+          <button class="nav-button" data-dashboard="messages">Messages</button>
+          <button class="nav-button" data-dashboard="support">Support</button>
+        </nav>
+        <footer class="sidebar-footer">
+          <div class="profile">
+            <div class="profile-avatar">AL</div>
+            <div class="profile-meta">
+              <div class="profile-name">Alex Lawson</div>
+              <div class="profile-role">System Admin</div>
+            </div>
+          </div>
+          <button class="logout">Log Out</button>
+        </footer>
+      </aside>
+      <main class="content">
+        <header class="content-header">
+          <div>
+            <h1 id="dashboard-title">Facility Dashboard</h1>
+            <p id="dashboard-subtitle">
+              Welcome, Alex — your caseload snapshot is ready.
+            </p>
+          </div>
+          <div class="timestamp" id="dashboard-timestamp">Updated October 29, 2025 · 7:26 PM PT</div>
+        </header>
+
+        <section class="quick-actions" aria-label="Quick actions">
+          <div class="section-title">Quick Actions</div>
+          <div class="actions-grid" id="quick-actions"></div>
+        </section>
+
+        <section class="summary" aria-label="Summary">
+          <div class="summary-cards" id="summary-cards"></div>
+          <div class="summary-detail" id="summary-detail"></div>
+        </section>
+
+        <section class="alerts" aria-label="Alerts and tasks">
+          <div class="alerts-header">
+            <h2 id="alerts-title">Recent Alerts</h2>
+            <button class="link-button" id="alerts-view-all">View all</button>
+          </div>
+          <ul class="alert-list" id="alerts-list"></ul>
+        </section>
+
+        <section class="tasks" aria-label="Next steps">
+          <div class="tasks-grid" id="tasks-grid"></div>
+        </section>
+      </main>
+    </div>
+
+    <div id="modal-root"></div>
+    <script src="app.js" type="module"></script>
+  </body>
+</html>
