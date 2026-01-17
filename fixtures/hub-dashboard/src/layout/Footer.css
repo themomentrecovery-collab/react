@@ -15,6 +15,13 @@
   z-index: 90;
 }
 
+.footer-separator {
+  width: 1px;
+  height: 20px;
+  background: rgba(226, 232, 240, 0.7);
+  display: inline-block;
+}
+
 .footer-link {
   color: #60a5fa;
   text-decoration: underline;
