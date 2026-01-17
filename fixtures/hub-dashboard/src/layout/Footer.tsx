@@ -3,10 +3,8 @@ import './Footer.css';
 const Footer = () => {
   return (
     <footer className="dashboard-footer" role="contentinfo">
-      <span>Copyright The Moment, Inc 2025</span>
-      <span className="footer-separator" aria-hidden>
-        |
-      </span>
+      <span>Copyright © 2025 The Moment, Inc</span>
+      <span className="footer-separator" aria-hidden />
       <a
         href="https://www.steepsoft.com"
         target="_blank"

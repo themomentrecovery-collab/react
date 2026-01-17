@@ -1,5 +1,12 @@
 import { Route, Routes, Navigate } from 'react-router-dom';
 import DashboardLayout from './layout/DashboardLayout';
+import AuthLayout from './layout/AuthLayout';
+import LoginPage from './pages/LoginPage';
+import RegistrationCodePage from './pages/RegistrationCodePage';
+import TwoFactorPage from './pages/TwoFactorPage';
+import EmployeeRegistrationPage from './pages/EmployeeRegistrationPage';
+import FacilityRegistrationPage from './pages/FacilityRegistrationPage';
+import ReferralAgencyRegistrationPage from './pages/ReferralAgencyRegistrationPage';
 import HomePage from './pages/HomePage';
 import AlertsPage from './pages/AlertsPage';
 import ReferralPoolPage from './pages/ReferralPoolPage';
@@ -16,9 +23,21 @@ const App = () => {
   return (
     <DashboardProvider>
       <Routes>
+        <Route element={<AuthLayout />}>
+          <Route path="/" element={<Navigate to="/login" replace />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/registration-code" element={<RegistrationCodePage />} />
+          <Route path="/two-factor" element={<TwoFactorPage />} />
+          <Route path="/register/employee" element={<EmployeeRegistrationPage />} />
+          <Route path="/register/facility" element={<FacilityRegistrationPage />} />
+          <Route path="/register/referral" element={<ReferralAgencyRegistrationPage />} />
+        </Route>
         <Route element={<DashboardLayout />}>
-          <Route path="/" element={<Navigate to="/home" replace />} />
           <Route path="/home" element={<HomePage />} />
+          <Route path="/dashboard/referral-agency" element={<HomePage />} />
+          <Route path="/dashboard/facility" element={<HomePage />} />
+          <Route path="/dashboard/hub-admin" element={<HomePage />} />
+          <Route path="/dashboard/hub-user" element={<HomePage />} />
           <Route path="/alerts" element={<AlertsPage />} />
           <Route path="/referral-pool" element={<ReferralPoolPage />} />
           <Route path="/my-referrals" element={<MyReferralsPage />} />
