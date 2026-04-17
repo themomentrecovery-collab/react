@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Moment Connect | Facility Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        [x-cloak] { display: none !important; }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        alertRed: '#dc2626',
+                        momentNavy: '#1e293b',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 text-slate-900" x-data="dashboardHandler()">
+
+    <div class="flex h-screen overflow-hidden">
+        <aside class="w-64 bg-momentNavy text-white flex-shrink-0 flex flex-col hidden md:flex">
+            <div class="p-6 font-bold text-xl border-b border-slate-700">
+                Moment Connect
+            </div>
+            <nav class="flex-1 p-4 space-y-2">
+                <a href="#" class="block p-3 bg-blue-600 rounded">Home</a>
+                <a href="#" class="block p-3 hover:bg-slate-800 rounded flex justify-between">
+                    Referrals <span class="bg-blue-500 text-xs px-2 py-1 rounded-full">12</span>
+                </a>
+                <a href="#" class="block p-3 hover:bg-slate-800 rounded">Messages</a>
+                <a href="#" class="block p-3 hover:bg-slate-800 rounded">Facilities</a>
+            </nav>
+            <div class="p-4 border-t border-slate-700 text-xs text-slate-400">
+                v1.0.4-stable
+            </div>
+        </aside>
+
+        <div class="flex flex-col flex-1 min-w-0 overflow-hidden">
+            <header class="h-16 bg-white border-b flex items-center justify-between px-8 z-10">
+                <div class="font-semibold text-slate-500 uppercase tracking-widest text-sm">Facility Dashboard</div>
+                <div class="flex items-center gap-4">
+                    <div class="text-right">
+                        <p class="text-sm font-bold">Admin User</p>
+                        <p class="text-xs text-slate-400">The Moment Inc.</p>
+                    </div>
+                    <div class="w-10 h-10 bg-slate-200 rounded-full border"></div>
+                </div>
+            </header>
+
+            <main class="flex-1 overflow-y-auto p-8">
+                <div class="max-w-7xl mx-auto">
+                    <div class="mb-8 p-4 bg-white border rounded-lg shadow-sm flex gap-4 items-center">
+                        <span class="text-xs font-bold text-slate-400 uppercase">Quick Actions:</span>
+                        <button class="px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded text-sm font-semibold">+ New Referral</button>
+                        <button class="px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded text-sm font-semibold">Update Bed Count</button>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+                        <div id="activeReferralCard" class="bg-white p-6 rounded-xl border shadow-sm">
+                            <p class="text-sm text-slate-500 font-medium">Active Referrals</p>
+                            <h3 class="text-3xl font-bold mt-1" x-text="stats.active">0</h3>
+                        </div>
+                        <div id="completedReferralCard" class="bg-white p-6 rounded-xl border shadow-sm">
+                            <p class="text-sm text-slate-500 font-medium">Completed</p>
+                            <h3 class="text-3xl font-bold mt-1" x-text="stats.completed">0</h3>
+                        </div>
+                        <div id="availableBedsCard" class="bg-white p-6 rounded-xl border shadow-sm">
+                            <p class="text-sm text-slate-500 font-medium text-green-600">Available Beds</p>
+                            <h3 class="text-3xl font-bold mt-1 text-green-600" x-text="stats.beds">0</h3>
+                        </div>
+                        <div id="pendingPlacementCard" class="bg-white p-6 rounded-xl border shadow-sm border-l-4 border-l-blue-500">
+                            <p class="text-sm text-slate-500 font-medium">Pending Placements</p>
+                            <h3 class="text-3xl font-bold mt-1" x-text="stats.pending">0</h3>
+                        </div>
+                    </div>
+
+                    <section class="bg-white border rounded-xl shadow-sm overflow-hidden">
+                        <div class="p-6 border-b flex justify-between items-center">
+                            <h2 class="text-lg font-bold">Red Alerts</h2>
+                            <div class="flex gap-2">
+                                <button @click="selectAll()" class="text-xs font-bold px-3 py-1 border rounded hover:bg-slate-50">Select All</button>
+                                <button @click="markAsRead()" class="text-xs font-bold px-3 py-1 border rounded hover:bg-slate-50">Mark as Read</button>
+                                <button @click="deleteSelected()" class="text-xs font-bold px-3 py-1 border border-alertRed text-alertRed rounded hover:bg-red-50">Delete</button>
+                            </div>
+                        </div>
+
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead class="bg-slate-50 text-slate-500 text-xs uppercase font-bold">
+                                    <tr>
+                                        <th class="p-4 w-10"></th>
+                                        <th class="p-4">Alert Header</th>
+                                        <th class="p-4">Date/Time</th>
+                                        <th class="p-4">Category</th>
+                                        <th class="p-4">Action</th>
+                                        <th class="p-4"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <template x-for="alert in alerts" :key="alert.id">
+                                        <template x-if="!alert.deleted">
+                                            <tr>
+                                                <td colspan="6" class="p-0 border-b">
+                                                    <div>
+                                                        <div class="grid grid-cols-[40px_1fr_160px_140px_160px_40px] items-center hover:bg-slate-50 transition-colors cursor-pointer"
+                                                            :class="alert.unread ? 'font-bold text-black' : 'text-slate-500 font-normal'">
+                                                            <div class="p-4" @click.stop>
+                                                                <input type="checkbox" x-model="alert.selected" class="rounded">
+                                                            </div>
+                                                            <div class="p-4 flex items-center gap-2">
+                                                                <template x-if="alert.important">
+                                                                    <span class="text-alertRed text-lg">!</span>
+                                                                </template>
+                                                                <span x-text="alert.header"></span>
+                                                            </div>
+                                                            <div class="p-4 text-xs">
+                                                                <span x-text="alert.date"></span> | <span x-text="alert.time"></span>
+                                                            </div>
+                                                            <div class="p-4">
+                                                                <span class="text-[10px] px-2 py-1 bg-slate-100 rounded tracking-widest uppercase" x-text="alert.category"></span>
+                                                            </div>
+                                                            <div class="p-4">
+                                                                <button
+                                                                    :disabled="alert.actionDisabled"
+                                                                    class="px-4 py-1.5 bg-blue-600 text-white text-xs rounded-md shadow-sm disabled:bg-slate-200 disabled:text-slate-400"
+                                                                    x-text="alert.actionLabel || 'Take Action'">
+                                                                </button>
+                                                            </div>
+                                                            <div class="p-4 text-right">
+                                                                <button @click="toggleAlert(alert.id)" class="p-1 hover:bg-slate-200 rounded">
+                                                                    <svg class="w-4 h-4 transition-transform" :class="expandedId === alert.id ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                        <div x-show="expandedId === alert.id" x-cloak class="bg-slate-50 border-t">
+                                                            <div class="p-6 flex flex-col gap-2">
+                                                                <template x-if="alert.important">
+                                                                    <span class="text-alertRed font-bold text-xs uppercase tracking-tighter">● Important</span>
+                                                                </template>
+                                                                <p class="text-sm text-slate-700 leading-relaxed" x-text="alert.details"></p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </template>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="p-6 border-t bg-slate-50 flex justify-center">
+                            <button class="text-sm font-bold text-blue-600 hover:underline">See More Unread Alerts</button>
+                        </div>
+                    </section>
+                </div>
+            </main>
+
+            <footer class="h-12 bg-white border-t px-8 flex items-center justify-between text-[10px] text-slate-400 uppercase tracking-widest font-semibold">
+                <span>&copy; 2026 The Moment Inc.</span>
+                <div class="flex gap-4">
+                    <a href="#" class="hover:text-slate-600">Privacy Policy</a>
+                    <a href="#" class="hover:text-slate-600">Terms of Service</a>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <script>
+        function dashboardHandler() {
+            return {
+                expandedId: null,
+                stats: { active: 42, completed: 156, beds: 8, pending: 3 },
+                alerts: [
+                    { id: 1, header: 'New Referral: John Doe', date: '04/17/2026', time: '09:45 AM', category: 'System', unread: true, important: true, selected: false, details: 'John Doe has been referred from San Joaquin County via Prop 36. Immediate bed confirmation required.', actionDisabled: false },
+                    { id: 2, header: 'Hub Admin Message', date: '04/17/2026', time: '08:12 AM', category: 'Message', unread: true, important: false, selected: false, details: 'Please update your facility licensing documents by the end of this week.', actionDisabled: false },
+                    { id: 3, header: 'Bed Count Discrepancy', date: '04/16/2026', time: '04:30 PM', category: 'Hub User', unread: false, important: true, selected: false, details: 'System noticed a mismatch between your reported occupancy and referral data.', actionDisabled: true, actionLabel: 'Resolved' }
+                ],
+                toggleAlert(id) {
+                    this.expandedId = this.expandedId === id ? null : id;
+                },
+                selectAll() {
+                    this.alerts.forEach((a) => {
+                        if (!a.deleted) a.selected = true;
+                    });
+                },
+                markAsRead() {
+                    this.alerts.filter((a) => a.selected).forEach((a) => {
+                        a.unread = false;
+                        a.selected = false;
+                    });
+                },
+                deleteSelected() {
+                    if (confirm('Are you sure you want to delete selected alerts?')) {
+                        this.alerts.forEach((a) => {
+                            if (a.selected) a.deleted = true;
+                        });
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+</html>
