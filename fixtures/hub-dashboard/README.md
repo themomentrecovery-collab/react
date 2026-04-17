@@ -32,3 +32,11 @@ The dashboard includes the following routes:
 
 Quick actions, navigation, header, and footer elements persist across every page to
 mirror the specified dashboard shell.
+
+## Standalone Facility Dashboard Prototype
+
+A standalone HTML prototype based on the facility dashboard mockup is available at:
+
+- `fixtures/hub-dashboard/facility-dashboard.html`
+
+Open this file directly in a browser to view the Tailwind + Alpine implementation independent of the Vite routes.
